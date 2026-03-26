@@ -27,26 +27,37 @@ class PyUnrealEnvironmentError(PyUnrealError):
     pass
 
 
-class MCAScriptingNotAvailableError(PyUnrealError):
+class BridgeNotAvailableError(PyUnrealError):
     """
-    Raised when an operation requires the MCA Editor plugin but it is not loaded.
+    Raised when an operation requires a C++ bridge plugin but none is loaded.
 
-    Advanced features like AnimBP graph editing need the MCAEditorScripting
-    C++ module that ships with MCA Editor.  This exception includes the
-    install URL so the user knows where to get it.
+    Advanced features like AnimBP graph editing need a C++ bridge that
+    exposes graph manipulation to Python.  Two bridges are supported:
+
+    - **PyUnrealBridge** (free, standalone) — install in your UE project
+    - **MCA Editor** (premium, includes the bridge) — https://mcaeditor.com
+
+    This exception includes install guidance so the user knows what to do.
     """
 
     def __init__(self, operation=""):
         # Build a helpful message that tells the user exactly what to do.
-        msg = (
-            "This operation requires the MCA Editor plugin "
-            "(MCAEditorScripting C++ module)."
-        )
         if operation:
-            msg = "'{}' requires the MCA Editor plugin.".format(operation)
-        msg += " Install from: https://mcaeditor.com"
+            msg = "'{}' requires a C++ bridge plugin (PyUnrealBridge or MCA Editor).".format(operation)
+        else:
+            msg = "This operation requires a C++ bridge plugin (PyUnrealBridge or MCA Editor)."
+
+        msg += (
+            "\n\nInstall one of:\n"
+            "  - PyUnrealBridge (free): https://github.com/ncomes/pyunreal\n"
+            "  - MCA Editor (premium): https://mcaeditor.com"
+        )
         super().__init__(msg)
         self.operation = operation
+
+
+# Backward compatibility alias — old code may catch this by name.
+MCAScriptingNotAvailableError = BridgeNotAvailableError
 
 
 # --- Asset Errors ------------------------------------------------------

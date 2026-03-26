@@ -2,9 +2,9 @@
 StateMachine wrapper for AnimBP state machines.
 
 A StateMachine is a name-based reference — it does not hold a UObject
-pointer.  The C++ API (MCAAnimBlueprintLibrary) identifies state machines
-by name within an AnimBlueprint, so this class stores its name and a
-back-reference to the parent AnimBlueprint wrapper.
+pointer.  The C++ bridge API identifies state machines by name within
+an AnimBlueprint, so this class stores its name and a back-reference
+to the parent AnimBlueprint wrapper.
 
 State machines are created by :meth:`AnimBlueprint.add_state_machine`,
 not instantiated directly.
@@ -12,7 +12,8 @@ not instantiated directly.
 
 import logging
 
-from pyunreal.core.detection import require_mca_scripting
+from pyunreal.core.detection import require_bridge
+from pyunreal.core.detection import get_bridge_library
 from pyunreal.core.errors import InvalidOperationError
 from pyunreal.anim.state import State
 
@@ -67,12 +68,10 @@ class StateMachine:
         :return: List of State wrapper objects
         :rtype: list[State]
         """
-        require_mca_scripting("StateMachine.states")
-        import unreal
+        require_bridge("StateMachine.states")
+        lib = get_bridge_library()
 
-        names = unreal.MCAAnimBlueprintLibrary.list_states(
-            self._anim_bp._asset, self._name
-        )
+        names = lib.list_states(self._anim_bp._asset, self._name)
 
         # Wrap each name in a State object.
         return [State(self, name) for name in names]
@@ -100,16 +99,14 @@ class StateMachine:
         :rtype: State
         :raises InvalidOperationError: if the C++ call fails
         """
-        require_mca_scripting("StateMachine.add_state")
-        import unreal
+        require_bridge("StateMachine.add_state")
+        lib = get_bridge_library()
 
         anim_bp_asset = self._anim_bp._asset
 
         logger.info("Adding state '%s' to state machine '%s'", name, self._name)
 
-        success = unreal.MCAAnimBlueprintLibrary.add_state(
-            anim_bp_asset, self._name, name
-        )
+        success = lib.add_state(anim_bp_asset, self._name, name)
 
         if not success:
             raise InvalidOperationError(

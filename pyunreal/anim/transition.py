@@ -12,7 +12,8 @@ Transitions are created by :meth:`State.transition_to` or
 
 import logging
 
-from pyunreal.core.detection import require_mca_scripting
+from pyunreal.core.detection import require_bridge
+from pyunreal.core.detection import get_bridge_library
 from pyunreal.core.errors import InvalidOperationError
 
 # Module-level logger.
@@ -92,8 +93,8 @@ class Transition:
         :rtype: Transition
         :raises InvalidOperationError: if the C++ call fails
         """
-        require_mca_scripting("Transition.set_auto_rule")
-        import unreal
+        require_bridge("Transition.set_auto_rule")
+        lib = get_bridge_library()
 
         # Get the AnimBlueprint UObject from the ownership chain.
         anim_bp = self._state_machine._anim_bp._asset
@@ -104,7 +105,7 @@ class Transition:
             self._from_name, self._to_name, trigger_time
         )
 
-        success = unreal.MCAAnimBlueprintLibrary.set_auto_transition_rule(
+        success = lib.set_auto_transition_rule(
             anim_bp, sm_name, self._from_name, self._to_name, trigger_time
         )
 

@@ -3,7 +3,7 @@ State wrapper for AnimBP state machine states.
 
 A State represents a single state node inside an AnimBP state machine.
 Like StateMachine, it is a name-based reference — it stores its name and
-a reference to its parent StateMachine, then passes both to the C++ API
+a reference to its parent StateMachine, then passes both to the C++ bridge
 for every operation.
 
 States are created by :meth:`StateMachine.add_state`, not instantiated
@@ -12,7 +12,8 @@ directly.
 
 import logging
 
-from pyunreal.core.detection import require_mca_scripting
+from pyunreal.core.detection import require_bridge
+from pyunreal.core.detection import get_bridge_library
 from pyunreal.core.errors import InvalidOperationError
 from pyunreal.anim.transition import Transition
 
@@ -74,25 +75,20 @@ class State:
         The ``anim_asset`` should be a loaded UE animation object
         (AnimSequence, BlendSpace, etc.).
 
-        .. note::
-            This updates an existing animation player node.  If the state
-            was just created, the C++ side creates a default player node
-            during ``add_state``.
-
         :param anim_asset: Loaded UE animation asset (e.g. from ``load()``)
         :return: self for method chaining
         :rtype: State
         :raises InvalidOperationError: if the C++ call fails
         """
-        require_mca_scripting("State.set_animation")
-        import unreal
+        require_bridge("State.set_animation")
+        lib = get_bridge_library()
 
         anim_bp = self._state_machine._anim_bp._asset
         sm_name = self._state_machine._name
 
         logger.info("Setting animation on state '%s': %s", self._name, anim_asset)
 
-        success = unreal.MCAAnimBlueprintLibrary.set_state_animation(
+        success = lib.set_state_animation(
             anim_bp, sm_name, self._name, anim_asset
         )
 
@@ -118,15 +114,15 @@ class State:
         :rtype: State
         :raises InvalidOperationError: if the C++ call fails
         """
-        require_mca_scripting("State.set_default")
-        import unreal
+        require_bridge("State.set_default")
+        lib = get_bridge_library()
 
         anim_bp = self._state_machine._anim_bp._asset
         sm_name = self._state_machine._name
 
         logger.info("Setting default state to '%s' in '%s'", self._name, sm_name)
 
-        success = unreal.MCAAnimBlueprintLibrary.set_default_state(
+        success = lib.set_default_state(
             anim_bp, sm_name, self._name
         )
 
@@ -153,8 +149,8 @@ class State:
         :raises InvalidOperationError: if the C++ call fails
         :raises ValueError: if the target state is from a different state machine
         """
-        require_mca_scripting("State.transition_to")
-        import unreal
+        require_bridge("State.transition_to")
+        lib = get_bridge_library()
 
         # Resolve target to a name string.
         target_name = self._resolve_target(target)
@@ -167,7 +163,7 @@ class State:
             self._name, target_name, crossfade
         )
 
-        success = unreal.MCAAnimBlueprintLibrary.add_transition(
+        success = lib.add_transition(
             anim_bp, sm_name, self._name, target_name, crossfade
         )
 
@@ -197,8 +193,8 @@ class State:
         :rtype: Transition
         :raises InvalidOperationError: if either operation fails
         """
-        require_mca_scripting("State.auto_transition_to")
-        import unreal
+        require_bridge("State.auto_transition_to")
+        lib = get_bridge_library()
 
         target_name = self._resolve_target(target)
         anim_bp = self._state_machine._anim_bp._asset
@@ -211,12 +207,12 @@ class State:
             self._name, target_name, trigger_time
         )
 
-        unreal.MCAAnimBlueprintLibrary.add_transition(
+        lib.add_transition(
             anim_bp, sm_name, self._name, target_name, crossfade
         )
 
         # Now set the auto rule on the transition.
-        success = unreal.MCAAnimBlueprintLibrary.set_auto_transition_rule(
+        success = lib.set_auto_transition_rule(
             anim_bp, sm_name, self._name, target_name, trigger_time
         )
 

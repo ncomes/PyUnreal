@@ -3,8 +3,8 @@ AnimBlueprint wrapper — the top-level entry point for AnimBP authoring.
 
 An AnimBlueprint wraps a ``UAnimBlueprint`` UObject and provides a Pythonic
 interface for creating state machines, wiring states and transitions, and
-compiling.  All graph-editing operations require the MCA Editor plugin
-(MCAEditorScripting C++ module).
+compiling.  All graph-editing operations require a C++ bridge plugin —
+either PyUnrealBridge (standalone) or MCA Editor.
 
 Usage::
 
@@ -17,14 +17,15 @@ Usage::
 
 Dependencies:
     - ``unreal`` module (UE Python interpreter)
-    - MCA Editor plugin (for graph editing operations)
+    - PyUnrealBridge or MCA Editor plugin (for graph editing operations)
 """
 
 import logging
 
 from pyunreal.core.base import UnrealObjectWrapper
 from pyunreal.core.detection import require_unreal
-from pyunreal.core.detection import require_mca_scripting
+from pyunreal.core.detection import require_bridge
+from pyunreal.core.detection import get_bridge_library
 from pyunreal.core.errors import AssetNotFoundError
 from pyunreal.core.errors import InvalidOperationError
 from pyunreal.anim.state_machine import StateMachine
@@ -66,15 +67,15 @@ class AnimBlueprint(UnrealObjectWrapper):
         :rtype: AnimBlueprint
         :raises InvalidOperationError: if creation fails
         """
-        require_mca_scripting("AnimBlueprint.create")
-        import unreal
+        require_bridge("AnimBlueprint.create")
+        lib = get_bridge_library()
 
         logger.info(
             "Creating AnimBlueprint: %s/%s (skeleton: %s)",
             package_path, asset_name, skeleton
         )
 
-        result = unreal.MCAAnimBlueprintLibrary.create_anim_blueprint(
+        result = lib.create_anim_blueprint(
             package_path, asset_name, skeleton
         )
 
@@ -162,12 +163,12 @@ class AnimBlueprint(UnrealObjectWrapper):
         :return: List of StateMachine wrapper objects
         :rtype: list[StateMachine]
         """
-        require_mca_scripting("AnimBlueprint.state_machines")
-        import unreal
+        require_bridge("AnimBlueprint.state_machines")
+        lib = get_bridge_library()
 
         self._validate()
 
-        names = unreal.MCAAnimBlueprintLibrary.list_state_machines(self._asset)
+        names = lib.list_state_machines(self._asset)
 
         # Wrap each name in a StateMachine object.
         return [StateMachine(self, name) for name in names]
@@ -186,8 +187,8 @@ class AnimBlueprint(UnrealObjectWrapper):
         :rtype: StateMachine
         :raises InvalidOperationError: if the C++ call fails
         """
-        require_mca_scripting("AnimBlueprint.add_state_machine")
-        import unreal
+        require_bridge("AnimBlueprint.add_state_machine")
+        lib = get_bridge_library()
 
         self._validate()
 
@@ -196,7 +197,7 @@ class AnimBlueprint(UnrealObjectWrapper):
             name, self.name, connect_to_root
         )
 
-        success = unreal.MCAAnimBlueprintLibrary.add_state_machine(
+        success = lib.add_state_machine(
             self._asset, name, connect_to_root
         )
 
@@ -222,16 +223,14 @@ class AnimBlueprint(UnrealObjectWrapper):
         :rtype: bool
         :raises InvalidOperationError: if compilation fails
         """
-        require_mca_scripting("AnimBlueprint.compile")
-        import unreal
+        require_bridge("AnimBlueprint.compile")
+        lib = get_bridge_library()
 
         self._validate()
 
         logger.info("Compiling AnimBlueprint: %s", self.name)
 
-        success = unreal.MCAAnimBlueprintLibrary.compile_anim_blueprint(
-            self._asset
-        )
+        success = lib.compile_anim_blueprint(self._asset)
 
         if not success:
             raise InvalidOperationError(

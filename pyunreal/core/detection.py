@@ -1,13 +1,20 @@
 """
-Runtime detection of the Unreal Engine environment and optional MCA Editor plugin.
+Runtime detection of the Unreal Engine environment and C++ bridge plugin.
 
-Results are cached at module level so the import checks and hasattr calls
-run only once per Python session.  All other PyUnreal modules should use
-the ``require_*`` helpers rather than doing their own import checks.
+PyUnreal's AnimBP features require a C++ bridge that exposes graph editing
+to Python.  Two bridges are supported:
+
+- **PyUnrealBridge** (standalone, open source) — ``unreal.PyUnrealBlueprintLibrary``
+- **MCA Editor** (premium, includes PyUnrealBridge) — ``unreal.MCAAnimBlueprintLibrary``
+
+Detection checks for both and prefers PyUnrealBridge.  Results are cached
+at module level so the import checks and hasattr calls run only once per
+Python session.  All other PyUnreal modules should use the ``require_*``
+helpers rather than doing their own import checks.
 """
 
 from pyunreal.core.errors import PyUnrealEnvironmentError
-from pyunreal.core.errors import MCAScriptingNotAvailableError
+from pyunreal.core.errors import BridgeNotAvailableError
 
 
 # --- Cache -------------------------------------------------------------
@@ -34,23 +41,70 @@ def _unreal_available():
     return _cache["unreal"]
 
 
-def _mca_scripting_available():
+def _bridge_available():
     """
-    Check whether the MCAEditorScripting C++ module is loaded.
+    Check whether a C++ bridge plugin is loaded.
 
-    This module ships with the MCA Editor plugin and exposes
-    ``unreal.MCAAnimBlueprintLibrary`` among other classes.
+    Checks for two bridge libraries in order of preference:
+    1. ``PyUnrealBlueprintLibrary`` (standalone PyUnrealBridge plugin)
+    2. ``MCAAnimBlueprintLibrary`` (MCA Editor plugin, backward compat)
 
-    :return: True if MCAEditorScripting is available
+    :return: True if either bridge library is available
     :rtype: bool
     """
-    if "mca" not in _cache:
+    if "bridge" not in _cache:
         if not _unreal_available():
-            _cache["mca"] = False
+            _cache["bridge"] = False
+            _cache["bridge_class"] = None
         else:
             import unreal
-            _cache["mca"] = hasattr(unreal, "MCAAnimBlueprintLibrary")
-    return _cache["mca"]
+
+            # Prefer the standalone PyUnrealBridge first.
+            if hasattr(unreal, "PyUnrealBlueprintLibrary"):
+                _cache["bridge"] = True
+                _cache["bridge_class"] = unreal.PyUnrealBlueprintLibrary
+            # Fall back to MCA Editor's library for backward compatibility.
+            elif hasattr(unreal, "MCAAnimBlueprintLibrary"):
+                _cache["bridge"] = True
+                _cache["bridge_class"] = unreal.MCAAnimBlueprintLibrary
+            else:
+                _cache["bridge"] = False
+                _cache["bridge_class"] = None
+
+    return _cache["bridge"]
+
+
+def get_bridge_library():
+    """
+    Return the C++ bridge library class for AnimBP operations.
+
+    Returns whichever is available: ``PyUnrealBlueprintLibrary`` (preferred)
+    or ``MCAAnimBlueprintLibrary`` (backward compat).  Both expose the
+    same function signatures.
+
+    :return: The bridge library class
+    :rtype: type
+    :raises BridgeNotAvailableError: if no bridge is loaded
+    """
+    require_bridge()
+    return _cache["bridge_class"]
+
+
+# --- Backward Compatibility Aliases ------------------------------------
+# These preserve the old API so existing code using require_mca_scripting
+# continues to work without changes.
+
+def _mca_scripting_available():
+    """
+    Check whether any AnimBP bridge is available.
+
+    .. deprecated:: 0.2.0
+        Use :func:`_bridge_available` instead.
+
+    :return: True if a bridge library is available
+    :rtype: bool
+    """
+    return _bridge_available()
 
 
 # --- Requirement Gates -------------------------------------------------
@@ -70,21 +124,35 @@ def require_unreal():
         )
 
 
-def require_mca_scripting(operation=""):
+def require_bridge(operation=""):
     """
-    Raise if the MCA Editor plugin is not loaded.
+    Raise if no C++ bridge plugin is loaded.
 
-    Call this at the top of any function that needs MCAEditorScripting
-    C++ functions (AnimBP graph editing, etc.).
+    Call this at the top of any function that needs AnimBP graph editing
+    operations (state machines, states, transitions, etc.).
 
     :param str operation: Optional name of the operation for the error message
-    :raises MCAScriptingNotAvailableError: if the plugin is not loaded
+    :raises BridgeNotAvailableError: if no bridge plugin is loaded
     """
     # Also checks for unreal first — no point checking the plugin if
     # we are not even inside UE.
     require_unreal()
-    if not _mca_scripting_available():
-        raise MCAScriptingNotAvailableError(operation)
+    if not _bridge_available():
+        raise BridgeNotAvailableError(operation)
+
+
+def require_mca_scripting(operation=""):
+    """
+    Raise if no AnimBP bridge is available.
+
+    .. deprecated:: 0.2.0
+        Use :func:`require_bridge` instead.  This alias is kept for
+        backward compatibility.
+
+    :param str operation: Optional name of the operation for the error message
+    :raises BridgeNotAvailableError: if no bridge plugin is loaded
+    """
+    require_bridge(operation)
 
 
 def reset_cache():
