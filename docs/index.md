@@ -83,6 +83,8 @@ instructions if the plugin is not loaded.
 
 - [Getting Started](guides/getting-started.md) -- Install, configure, and run your first script
 - [AnimBP Cookbook](guides/animbp-cookbook.md) -- Common AnimBP recipes and patterns
+- [Blueprint Cookbook](guides/blueprint-cookbook.md) -- Blueprint creation, variables, batch setup
+- [Control Rig Cookbook](guides/control-rig-cookbook.md) -- Rig inspection, controls, transforms
 
 ## API Reference
 
