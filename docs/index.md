@@ -96,6 +96,21 @@ instructions if the plugin is not loaded.
 - [`State`](api/State.md) -- Set animation, create transitions, set as default
 - [`Transition`](api/Transition.md) -- Configure crossfade and auto-transition rules
 
+### Blueprint
+- [`Blueprint`](api/Blueprint.md) -- Create, load, and manage Blueprints
+- [`Component`](api/Component.md) -- Read-only component data
+- [`Variable`](api/Variable.md) -- Variable with read/write defaults
+
+### Control Rig
+- [`ControlRig`](api/ControlRig.md) -- Load and build Control Rig hierarchies
+- [`Control`](api/Control.md) -- Control with transform and shape access
+- [`Bone`](api/Bone.md) -- Read-only skeleton bone
+- [`Null`](api/Null.md) -- Space/group element
+
+### Scene & Actors
+- [`Actor`](api/Actor.md) -- Spawn and manipulate level actors
+- [`scene`](api/scene.md) -- Scene queries (find, select, filter)
+
 ### Exceptions
 - [`PyUnrealError`](api/errors.md) -- Base exception and subclasses
 
