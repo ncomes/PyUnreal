@@ -162,6 +162,16 @@ def _build_mock_unreal():
     unreal.RigControlSettings = MagicMock
     unreal.RigControlValue = MagicMock
 
+    # --- Material types ------------------------------------------------
+    unreal.Material = type("Material", (), {})
+    unreal.MaterialFactoryNew = MagicMock
+    unreal.MeshComponent = type("MeshComponent", (), {})
+
+    # --- Viewport/Subsystem types --------------------------------------
+    unreal.LevelEditorSubsystem = type("LevelEditorSubsystem", (), {})
+    unreal.UnrealEditorSubsystem = type("UnrealEditorSubsystem", (), {})
+    unreal.AutomationLibrary = MagicMock()
+
     # --- Factory types -------------------------------------------------
     unreal.BlueprintFactory = MagicMock
 
@@ -202,6 +212,20 @@ def _build_mock_unreal():
 
     # get_default_object
     unreal.get_default_object = MagicMock(return_value=MagicMock())
+
+    # --- Subsystem accessor -------------------------------------------
+    # get_editor_subsystem returns a mock subsystem keyed by class.
+    _subsystem_mocks = {}
+
+    def _get_editor_subsystem(subsystem_class):
+        if subsystem_class not in _subsystem_mocks:
+            _subsystem_mocks[subsystem_class] = MagicMock()
+        return _subsystem_mocks[subsystem_class]
+
+    unreal.get_editor_subsystem = _get_editor_subsystem
+
+    # AutomationLibrary screenshot.
+    unreal.AutomationLibrary.take_high_res_screenshot = MagicMock()
 
     # --- Bridge libraries (for AnimBP tests) ---------------------------
     bridge = MagicMock()

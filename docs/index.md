@@ -107,6 +107,12 @@ instructions if the plugin is not loaded.
 - [`Bone`](api/Bone.md) -- Read-only skeleton bone
 - [`Null`](api/Null.md) -- Space/group element
 
+### Material
+- [`Material`](api/Material.md) -- Create, load, and assign materials
+
+### Viewport
+- [`viewport`](api/viewport.md) -- Viewport control (focus, camera, screenshot)
+
 ### Scene & Actors
 - [`Actor`](api/Actor.md) -- Spawn and manipulate level actors
 - [`scene`](api/scene.md) -- Scene queries (find, select, filter)

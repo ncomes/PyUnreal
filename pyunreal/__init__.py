@@ -15,6 +15,8 @@ Modules:
     - ``pyunreal.blueprint`` — Blueprint, Component, Variable
     - ``pyunreal.control_rig`` — ControlRig, Control, Null, Bone
     - ``pyunreal.scene`` — Actor, scene queries (find, select, spawn)
+    - ``pyunreal.material`` — Material (create, load, params, assign)
+    - ``pyunreal.viewport`` — viewport control (focus, camera, screenshot)
 
 Quick start::
 
@@ -23,13 +25,15 @@ Quick start::
     from pyunreal.blueprint import Blueprint
     from pyunreal.control_rig import ControlRig
     from pyunreal.scene import Actor, scene
+    from pyunreal.material import Material
+    from pyunreal.viewport import viewport
 
 Dependencies:
     - ``unreal`` module (only available inside UE's Python interpreter)
     - MCA Editor plugin (optional, for AnimBP graph editing)
 """
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 __app_name__ = "PyUnreal"
 
 # --- Top-level convenience imports -------------------------------------
