@@ -18,3 +18,5 @@ from pyunreal.anim.anim_blueprint import AnimBlueprint
 from pyunreal.anim.state_machine import StateMachine
 from pyunreal.anim.state import State
 from pyunreal.anim.transition import Transition
+from pyunreal.anim.event_graph import EventGraph
+from pyunreal.anim.event_graph import GraphNode

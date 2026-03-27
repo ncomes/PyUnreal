@@ -97,6 +97,7 @@ instructions if the plugin is not loaded.
 - [`StateMachine`](api/StateMachine.md) -- Add and list states within a state machine
 - [`State`](api/State.md) -- Set animation, create transitions, set as default
 - [`Transition`](api/Transition.md) -- Configure crossfade and auto-transition rules
+- [`EventGraph`](api/EventGraph.md) -- EventGraph node creation and pin wiring
 
 ### Blueprint
 - [`Blueprint`](api/Blueprint.md) -- Create, load, and manage Blueprints

@@ -29,6 +29,7 @@ from pyunreal.core.detection import get_bridge_library
 from pyunreal.core.errors import AssetNotFoundError
 from pyunreal.core.errors import InvalidOperationError
 from pyunreal.anim.state_machine import StateMachine
+from pyunreal.anim.event_graph import EventGraph
 
 # Module-level logger.
 logger = logging.getLogger(__name__)
@@ -151,6 +152,21 @@ class AnimBlueprint(UnrealObjectWrapper):
         """
         self._validate()
         return self._asset.target_skeleton
+
+    @property
+    def event_graph(self):
+        """
+        The EventGraph for this AnimBlueprint.
+
+        Returns an :class:`EventGraph` wrapper that lets you add nodes
+        (events, function calls, casts, variable get/set) and wire them
+        together programmatically.
+
+        :return: EventGraph wrapper
+        :rtype: EventGraph
+        """
+        self._validate()
+        return EventGraph(self)
 
     @property
     def state_machines(self):

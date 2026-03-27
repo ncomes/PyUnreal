@@ -16,6 +16,7 @@
 #include "PyUnrealBlueprintLibrary.generated.h"
 
 class UAnimBlueprint;
+class UBlueprint;
 class USkeleton;
 class UAnimSequenceBase;
 
@@ -225,6 +226,161 @@ public:
 		meta = (DisplayName = "Compile Animation Blueprint"))
 	static bool CompileAnimBlueprint(UAnimBlueprint* AnimBlueprint);
 
+	// --- EventGraph Node Operations ----------------------------------------
+
+	/**
+	 * Add an event node to a Blueprint's EventGraph.
+	 *
+	 * Creates a UK2Node_Event node for a named event (e.g.
+	 * "BlueprintInitializeAnimation", "BlueprintUpdateAnimation",
+	 * "ReceiveBeginPlay").
+	 *
+	 * @param Blueprint   The target Blueprint or AnimBlueprint.
+	 * @param EventName   The UE event function name.
+	 * @return Unique node ID string, or empty string on failure.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "PyUnreal|EventGraph",
+		meta = (DisplayName = "Add Event Node"))
+	static FString AddEventNode(
+		UBlueprint* Blueprint,
+		const FString& EventName
+	);
+
+	/**
+	 * Add a function call node to a Blueprint's EventGraph.
+	 *
+	 * Creates a UK2Node_CallFunction for a method on a given class.
+	 * If TargetClass is empty, uses the Blueprint's generated class.
+	 *
+	 * @param Blueprint     The target Blueprint.
+	 * @param FunctionName  Name of the function to call.
+	 * @param TargetClass   Class that owns the function (optional).
+	 * @return Unique node ID string, or empty string on failure.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "PyUnreal|EventGraph",
+		meta = (DisplayName = "Add Function Call Node"))
+	static FString AddFunctionCallNode(
+		UBlueprint* Blueprint,
+		const FString& FunctionName,
+		const FString& TargetClass = TEXT("")
+	);
+
+	/**
+	 * Add a Cast node to a Blueprint's EventGraph.
+	 *
+	 * @param Blueprint       The target Blueprint.
+	 * @param TargetClassName Name of the class to cast to (e.g. "WCompanionCharacter").
+	 * @return Unique node ID string, or empty string on failure.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "PyUnreal|EventGraph",
+		meta = (DisplayName = "Add Cast Node"))
+	static FString AddCastNode(
+		UBlueprint* Blueprint,
+		const FString& TargetClassName
+	);
+
+	/**
+	 * Add a Variable GET node to a Blueprint's EventGraph.
+	 *
+	 * @param Blueprint  The target Blueprint.
+	 * @param VarName    Name of the variable to get.
+	 * @return Unique node ID string, or empty string on failure.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "PyUnreal|EventGraph",
+		meta = (DisplayName = "Add Variable Get Node"))
+	static FString AddVariableGetNode(
+		UBlueprint* Blueprint,
+		const FString& VarName
+	);
+
+	/**
+	 * Add a Variable SET node to a Blueprint's EventGraph.
+	 *
+	 * @param Blueprint  The target Blueprint.
+	 * @param VarName    Name of the variable to set.
+	 * @return Unique node ID string, or empty string on failure.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "PyUnreal|EventGraph",
+		meta = (DisplayName = "Add Variable Set Node"))
+	static FString AddVariableSetNode(
+		UBlueprint* Blueprint,
+		const FString& VarName
+	);
+
+	/**
+	 * Connect two pins on nodes in a Blueprint's EventGraph.
+	 *
+	 * This is the core wiring function — it connects any output pin on
+	 * one node to any input pin on another node (exec or data).
+	 *
+	 * @param Blueprint    The target Blueprint.
+	 * @param SourceNodeId Node ID of the source node (from Add*Node return).
+	 * @param SourcePin    Pin name on the source node (e.g. "then", "ReturnValue").
+	 * @param TargetNodeId Node ID of the target node.
+	 * @param TargetPin    Pin name on the target node (e.g. "execute", "self").
+	 * @return True if the connection was made.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "PyUnreal|EventGraph",
+		meta = (DisplayName = "Connect Pins"))
+	static bool ConnectPins(
+		UBlueprint* Blueprint,
+		const FString& SourceNodeId,
+		const FString& SourcePin,
+		const FString& TargetNodeId,
+		const FString& TargetPin
+	);
+
+	/**
+	 * List all pins on a node in a Blueprint's EventGraph.
+	 *
+	 * Returns pin information for discovery — useful when wiring nodes
+	 * programmatically and you need to know pin names.
+	 *
+	 * @param Blueprint  The target Blueprint.
+	 * @param NodeId     Node ID to inspect.
+	 * @param OutPins    Output array of "Direction:PinName:PinType" strings.
+	 * @return True if the node was found.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "PyUnreal|EventGraph",
+		meta = (DisplayName = "Get Node Pins"))
+	static bool GetNodePins(
+		UBlueprint* Blueprint,
+		const FString& NodeId,
+		TArray<FString>& OutPins
+	);
+
+	/**
+	 * Set the position of a node in the graph editor.
+	 *
+	 * @param Blueprint  The target Blueprint.
+	 * @param NodeId     Node ID to position.
+	 * @param X          X position in graph coordinates.
+	 * @param Y          Y position in graph coordinates.
+	 * @return True if the node was found and moved.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "PyUnreal|EventGraph",
+		meta = (DisplayName = "Set Node Position"))
+	static bool SetNodePosition(
+		UBlueprint* Blueprint,
+		const FString& NodeId,
+		int32 X,
+		int32 Y
+	);
+
+	/**
+	 * List all nodes in a Blueprint's EventGraph.
+	 *
+	 * @param Blueprint  The target Blueprint.
+	 * @param OutNodes   Output array of "NodeId:ClassName:Title" strings.
+	 * @return True if the EventGraph was found.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "PyUnreal|EventGraph",
+		meta = (DisplayName = "List EventGraph Nodes"))
+	static bool ListEventGraphNodes(
+		UBlueprint* Blueprint,
+		TArray<FString>& OutNodes
+	);
+
 private:
 
 	// --- Internal Helpers --------------------------------------------------
@@ -250,4 +406,13 @@ private:
 
 	/** Get the root AnimGraph from an AnimBP. */
 	static class UEdGraph* GetAnimGraph(UAnimBlueprint* AnimBlueprint);
+
+	/** Get the EventGraph (UbergraphPages[0]) from a Blueprint. */
+	static class UEdGraph* GetEventGraph(UBlueprint* Blueprint);
+
+	/** Find a node in any UbergraphPage by its NodeGuid string. */
+	static class UEdGraphNode* FindNodeById(UBlueprint* Blueprint, const FString& NodeId);
+
+	/** Convert a FGuid to a stable string ID for Python. */
+	static FString NodeIdToString(const FGuid& Guid);
 };

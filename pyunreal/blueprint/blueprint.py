@@ -203,6 +203,22 @@ class Blueprint(UnrealObjectWrapper):
     # --- Properties (read-only) ----------------------------------------
 
     @property
+    def event_graph(self):
+        """
+        The EventGraph for this Blueprint.
+
+        Returns an EventGraph wrapper for programmatic node creation
+        and wiring. Requires the PyUnrealBridge or MCA Editor plugin.
+
+        :return: EventGraph wrapper
+        :rtype: EventGraph
+        """
+        from pyunreal.anim.event_graph import EventGraph
+
+        self._validate()
+        return EventGraph(self)
+
+    @property
     def name(self):
         """
         The asset name of this Blueprint.
