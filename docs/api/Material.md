@@ -1,3 +1,7 @@
+---
+description: "Material API reference — create, load, and assign Unreal Engine materials with Python. Set parameters on material instances."
+---
+
 # Material
 
 Pythonic wrapper around a UE Material or MaterialInstance asset.

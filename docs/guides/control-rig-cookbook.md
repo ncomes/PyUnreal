@@ -1,3 +1,7 @@
+---
+description: "Control Rig cookbook — Python recipes for building rigs, adding controls, inspecting bone hierarchies, and transforms in Unreal Engine."
+---
+
 # Control Rig Cookbook
 
 Common recipes and patterns for Control Rig setup with PyUnreal.

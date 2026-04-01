@@ -1,0 +1,94 @@
+site_name: PyUnreal
+site_url: https://mcaeditor.com/docs/pyunreal/
+docs_dir: docs
+site_dir: site
+site_description: Pythonic wrapper for Unreal Engine's Python API. PyMEL for Unreal.
+site_author: Nathan Comes
+
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: custom
+    accent: orange
+  font:
+    text: Inter
+    code: JetBrains Mono
+  logo: assets/images/pyunreal-logo.png
+  favicon: assets/images/pyunreal-logo.png
+  custom_dir: overrides
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - toc.follow
+
+extra_css:
+  - assets/stylesheets/custom.css
+
+plugins:
+  - search
+
+extra:
+  generator: false
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/ncomes/pyunreal
+
+copyright: Copyright &copy; 2026 Mechanical Art Studios. MIT License.
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.keys
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Guides:
+    - Getting Started: guides/getting-started.md
+    - AnimBP Cookbook: guides/animbp-cookbook.md
+    - Blueprint Cookbook: guides/blueprint-cookbook.md
+    - Control Rig Cookbook: guides/control-rig-cookbook.md
+  - API Reference:
+    - Utilities:
+      - load / asset_exists: api/load.md
+      - Exceptions: api/errors.md
+    - Animation Blueprint:
+      - AnimBlueprint: api/AnimBlueprint.md
+      - StateMachine: api/StateMachine.md
+      - State: api/State.md
+      - Transition: api/Transition.md
+      - EventGraph: api/EventGraph.md
+    - Blueprint:
+      - Blueprint: api/Blueprint.md
+      - Component: api/Component.md
+      - Variable: api/Variable.md
+    - Control Rig:
+      - ControlRig: api/ControlRig.md
+      - Control: api/Control.md
+      - Bone: api/Bone.md
+      - "Null": api/Null.md
+    - Material:
+      - Material: api/Material.md
+    - Viewport:
+      - viewport: api/viewport.md
+    - Scene:
+      - Actor: api/Actor.md
+      - scene: api/scene.md
+  - MCA Editor: https://mcaeditor.com

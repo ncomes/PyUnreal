@@ -1,3 +1,7 @@
+---
+description: "AnimBP cookbook — Python recipes for creating locomotion state machines, blend spaces, transitions, and EventGraph wiring in Unreal Engine."
+---
+
 # AnimBP Cookbook
 
 Common recipes and patterns for AnimBP authoring with PyUnreal.

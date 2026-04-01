@@ -1,3 +1,7 @@
+---
+description: "AnimBlueprint API reference — create, load, and compile Animation Blueprints in Unreal Engine with Python. Add state machines, states, and transitions."
+---
+
 # AnimBlueprint
 
 ```python

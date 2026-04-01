@@ -1,3 +1,7 @@
+---
+description: "EventGraph API reference — programmatic Blueprint EventGraph node creation, pin wiring, and variable setup in Unreal Engine Python."
+---
+
 # EventGraph
 
 Wrapper for programmatic EventGraph node creation and pin wiring.

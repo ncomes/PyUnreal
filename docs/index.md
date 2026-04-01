@@ -1,3 +1,7 @@
+---
+description: "PyUnreal: Pythonic wrapper for Unreal Engine's Python API. PyMEL for Unreal — object-oriented, discoverable, built for Tech Artists."
+---
+
 # PyUnreal Documentation
 
 Pythonic wrapper for Unreal Engine's Python API. **PyMEL for Unreal.**

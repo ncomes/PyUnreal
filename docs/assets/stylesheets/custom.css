@@ -1,0 +1,14 @@
+/* --- PyUnreal docs — matches MCA Editor site styling -------------------- */
+
+/* Primary color — UE-inspired blue, same as MCA Editor header. */
+:root {
+    --md-primary-fg-color: #007acc;
+    --md-primary-fg-color--light: #1a8ad4;
+    --md-primary-fg-color--dark: #005a9e;
+}
+
+[data-md-color-scheme="slate"] {
+    --md-primary-fg-color: #007acc;
+    --md-primary-fg-color--light: #1a8ad4;
+    --md-primary-fg-color--dark: #005a9e;
+}

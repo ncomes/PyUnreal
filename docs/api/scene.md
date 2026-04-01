@@ -1,3 +1,7 @@
+---
+description: "Scene module reference — find, select, and filter actors in Unreal Engine levels with Python. Bulk operations and scene queries."
+---
+
 # scene (module)
 
 Module-level functions for querying and manipulating the current level.

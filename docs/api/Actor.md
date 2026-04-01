@@ -1,3 +1,7 @@
+---
+description: "Actor API reference — spawn, transform, and manipulate Unreal Engine level actors with Python. Pythonic property access and component queries."
+---
+
 # Actor
 
 Wraps a UE level actor with Pythonic property access and transform manipulation.

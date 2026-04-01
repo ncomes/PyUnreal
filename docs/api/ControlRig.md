@@ -1,3 +1,7 @@
+---
+description: "ControlRig API reference — load and build Control Rig hierarchies in Unreal Engine with Python. Add controls, nulls, and inspect bones."
+---
+
 # ControlRig
 
 Wraps a `UControlRigBlueprint` for inspecting and building rig hierarchies.

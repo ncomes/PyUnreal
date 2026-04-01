@@ -1,3 +1,7 @@
+---
+description: "Blueprint API reference — create, load, and manage Unreal Engine Blueprints with Python. Add components, variables, and set defaults."
+---
+
 # Blueprint
 
 Wraps a `UBlueprint` asset for creating and managing Blueprints.

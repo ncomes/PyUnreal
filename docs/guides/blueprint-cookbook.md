@@ -1,3 +1,7 @@
+---
+description: "Blueprint cookbook — Python recipes for creating Blueprints, adding components, setting variables, and batch setup in Unreal Engine."
+---
+
 # Blueprint Cookbook
 
 Common recipes and patterns for Blueprint authoring with PyUnreal.

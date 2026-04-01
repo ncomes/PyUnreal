@@ -1,3 +1,7 @@
+---
+description: "Install PyUnreal in Unreal Engine and run your first Python script. Setup guide for UE 5.4+ with pip install and Content/Python paths."
+---
+
 # Getting Started with PyUnreal
 
 This guide walks you through installing PyUnreal and running your first script.
